@@ -1,0 +1,66 @@
+server:
+  port: 9001
+spring:
+  profiles:
+    active: test
+  application:
+    name: SERVICE-UAA
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    database: 1
+    password: 15031911155Lh@=
+    jedis:
+      pool:
+        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+        max-idle: 8 # 连接池中的最大空闲连接
+        max-wait: 3000ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        min-idle: 0 # 连接池中的最小空闲连接
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.gjt.mm.mysql.Driver
+    dbcp2:
+      min-idle: 5
+      initial-size: 5
+      max-total: 5
+      max-wait-millis: 200
+mybatis:
+  config-location: classpath:mybatis/mybatis.cfg.xml
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+eureka:
+  instance:
+    instance-id: uaa-${server.port}
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+
+---
+spring:
+  profiles: dev
+  redis:
+    host: linaxhua.cn
+    port: 6600
+  datasource:
+    url: jdbc:mysql://localhost:3306/classsign?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: mysql
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:6001/eureka/
+
+---
+spring:
+  profiles: test
+  redis:
+    host: redis-8cde58f-dcs-emww.dcs.huaweicloud.com
+    port: 6379
+  datasource:
+    url: jdbc:mysql://rm-uf6ck33a76x59qa8q9o.mysql.rds.aliyuncs.com:3306/classsign?useUnicode=true&characterEncoding=utf8
+    username: classsign
+    password: classsign
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.0.49:6001/eureka

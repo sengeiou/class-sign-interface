@@ -1,0 +1,16 @@
+server:
+  port: 6001
+spring:
+  profiles:
+    active: dev
+eureka:
+  server:
+    eviction-interval-timer-in-ms: 30000
+  instance:
+    instance-id: registry-${server.port}
+    hostname: localhost
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

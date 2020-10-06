@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fzn.classsign.provider.dao.ClassDao">
+    <insert id="createClass" useGeneratedKeys="true" keyProperty="cid">
+        insert into class
+        (cnum ,name ,uid ,tname ,joincode ,total )
+        values
+        (#{cNum},#{name},#{uid},#{tName},#{joinCode},#{total})
+    </insert>
+    <insert id="joinClass">
+        insert into classjoin
+        (cid ,uid )
+        values
+        (#{cid},#{uid});
+        update class
+        set total =total +1
+        where cid =#{cid};
+    </insert>
+    <update id="updateClass">
+        update class
+        <trim prefix="set" suffixOverrides=",">
+            <if test="cNum!=null">
+                cnum =#{cNum},
+            </if>
+            <if test="name!=null">
+                name =#{name},
+            </if>
+            <if test="uid!=null">
+                uid =#{uid},
+            </if>
+            <if test="tName!=null">
+                tname =#{tName},
+            </if>
+            <if test="joinCode!=null">
+                joincode =#{joinCode},
+            </if>
+            <if test="total!=null">
+                total =#{total},
+            </if>
+        </trim>
+        <where>
+            cid=#{cid}
+        </where>
+    </update>
+    <delete id="exitClass">
+        delete from classjoin
+        <where>
+            uid =#{uid} and cid =#{cid}
+        </where>;
+        update class
+        set total =total -1
+        where cid =#{cid};
+    </delete>
+    <select id="getClassByCid" resultType="cn.fzn.classsign.common.entity.Class">
+        select * from class
+        where cid =#{cid}
+    </select>
+    <select id="listSimpleStudents" resultType="java.util.Map">
+        select
+        c.uid ,c.unum uNum,c.name
+        from cuser c
+        where c.uid in
+        (
+        select
+        cs.uid
+        from classjoin cs
+        where cid=#{cid}
+        )
+    </select>
+    <select id="listStudents" resultType="cn.fzn.classsign.common.entity.User">
+        select
+        c.uid ,c.phone ,c.unum uNum,c.name ,c.sex
+        from cuser c
+        where c.uid in
+        (
+        select
+        cs.uid
+        from classjoin cs
+        where cid=#{cid}
+        )
+    </select>
+    <select id="listBaseClassInfo" resultType="java.util.Map">
+        select
+        c.cid,c.cnum cNum,c.name ,c.joincode joinCode,c.total
+        from class c
+        where c.uid =#{uid}
+        order by c.cid desc
+    </select>
+    <select id="getTotalByCid" resultType="java.lang.Integer">
+        select
+        c.total
+        from class c
+        where c.cid=#{cid}
+    </select>
+    <select id="getCidByUidAndJoinCode" resultType="java.lang.Integer">
+        select
+        c.cid
+        from class c
+        where joincode =#{joinCode}
+    </select>
+    <select id="getStudentClassList" resultType="java.util.Map">
+        select
+        c.cid,c.cnum cNum,c.name ,c.joincode joinCode ,c.total
+        from class c
+        where c.cid in
+        (
+        select
+        cs.cid
+        from classjoin cs
+        where cs.uid =#{uid}
+        )
+        order by c.cid desc
+    </select>
+    <select id="isStudentExistInClass" resultType="java.lang.Integer">
+        select count(1)
+        from classjoin c
+        where c.cid =#{cid} and c.uid =#{uid}
+    </select>
+    <select id="isClassJoinCodeExist" resultType="java.lang.Boolean">
+        select count(1)
+        from class c
+        where c.joincode =#{classJoinCode}
+    </select>
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fzn.classsign.provider.dao.UserDao">
+    <sql id="userAll">
+        uid,phone ,unum uNum,name ,sex ,`password`
+    </sql>
+    <insert id="addUser">
+        insert into cuser
+        (phone,unum ,name ,sex ,`password` )
+        values
+        (#{phone},#{uNum},#{name},#{sex},#{password})
+    </insert>
+    <update id="updatePasswordByUid">
+        update cuser
+        set `password` =#{encodePassword}
+        where uid = #{uid}
+    </update>
+    <update id="updateUser">
+        update cuser
+        <trim prefix="set" suffixOverrides=",">
+            <if test="phone!=null">
+                phone = #{phone},
+            </if>
+            <if test="uNum!=null">
+                unum = #{uNum},
+            </if>
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="sex!=null">
+                sex = #{sex},
+            </if>
+        </trim>
+        <where>
+            uid = #{uid}
+        </where>
+    </update>
+    <select id="getUidByPhone" resultType="java.lang.Integer">
+        select
+        c.uid
+        from cuser c
+        where c.phone =#{phone}
+    </select>
+    <select id="getUserByUid" resultType="cn.fzn.classsign.common.entity.User">
+        select
+        *
+        from cuser c
+        where c.uid =#{uid}
+    </select>
+    <select id="listStudentsByCid" resultType="cn.fzn.classsign.common.entity.User">
+        <!--        未用该方法-->
+    </select>
+    <select id="getUserByPhone" resultType="cn.fzn.classsign.common.entity.User">
+        select
+        <include refid="userAll"/>
+        from cuser c
+        where c.phone =#{phone}
+    </select>
+</mapper>

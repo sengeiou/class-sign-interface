@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fzn.classsign.uaa.dao.RBACDao">
+    <sql id="userAll">
+        uid,phone ,unum uNum,name ,sex ,`password`
+    </sql>
+    <select id="getUserByUid" resultType="cn.fzn.classsign.common.entity.User">
+        select
+        <include refid="userAll"/>
+        from cuser c
+        where c.uid =#{uid}
+    </select>
+    <select id="getPhoneByUid" resultType="java.lang.String">
+        select c.phone
+        from cuser c
+        where c.uid =#{uid}
+    </select>
+</mapper>

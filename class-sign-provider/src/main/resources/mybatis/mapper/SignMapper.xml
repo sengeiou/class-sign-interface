@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fzn.classsign.provider.dao.SignDao">
+    <sql id="signInStatisticsAll">
+        ssid,cid,name,starttime startTime,checkinnum checkInNum,total,status
+    </sql>
+    <sql id="signInAll">
+        sid,ssid,uid,unum uNum,name,status
+    </sql>
+    <insert id="createSign" useGeneratedKeys="true" keyProperty="ssid">
+        insert into signinstatistics
+        (cid ,name ,starttime ,checkinnum ,total ,status )
+        values
+        (#{cid},#{name},#{startTime},#{checkInNum},#{total},#{status})
+    </insert>
+    <insert id="addSignRecord">
+        insert into signin
+        (ssid ,uid ,unum ,name ,status )
+        values
+        <foreach collection="list" index="index" separator="," item="item">
+            (#{item.ssid},#{item.uid},#{item.uNum},#{item.name},#{item.status})
+        </foreach>
+    </insert>
+    <update id="updateSignInStatistics">
+        update signinstatistics
+        <trim prefix="set" suffixOverrides=",">
+            <if test="cid!=null">
+                cid=#{cid},
+            </if>
+            <if test="name!=null">
+                name =#{name},
+            </if>
+            <if test="startTime!=null">
+                starttime =#{startTime},
+            </if>
+            <if test="checkInNum!=null">
+                checkinnum =#{checkInNum},
+            </if>
+            <if test="total!=null">
+                total =#{total},
+            </if>
+            <if test="status!=null">
+                status =#{status},
+            </if>
+        </trim>
+        <where>
+            ssid =#{ssid}
+        </where>
+    </update>
+    <update id="increaseCheckInNum">
+        update signinstatistics
+        set checkinnum=checkinnum+1
+        where ssid=#{ssid}
+    </update>
+    <update id="reduceCheckInNum">
+        update signinstatistics
+        set checkinnum=checkinnum-1
+        where ssid=#{ssid}
+    </update>
+    <update id="updateSignIn">
+        update signin
+        set status=#{status}
+        where sid=#{sid}
+    </update>
+    <select id="listSignStatistics" resultType="cn.fzn.classsign.common.entity.SignInStatistics">
+        select
+        <include refid="signInStatisticsAll"/>
+        from signinstatistics s
+        where s.cid =#{cid}
+        order by ssid desc
+    </select>
+    <select id="listSignIn" resultType="cn.fzn.classsign.common.entity.SignIn">
+        select
+        <include refid="signInAll"/>
+        from signin s
+        where s.ssid =#{ssid}
+        order by sid desc
+    </select>
+    <select id="getCidBySsid" resultType="java.lang.Integer">
+        select
+        ss.cid
+        from signinstatistics ss
+        where ss.ssid =#{ssid}
+    </select>
+    <select id="getSignInStatisticsBySsid" resultType="cn.fzn.classsign.common.entity.SignInStatistics">
+        select
+        <include refid="signInStatisticsAll"/>
+        from signinstatistics ss
+        where ss.ssid =#{ssid}
+    </select>
+    <select id="listSignInRecord" resultType="java.util.Map">
+        select
+        sss.name,sss.starttime,s.status
+        from signin s ,
+        (
+        select ss.ssid,ss.name ,ss.starttime
+        from signinstatistics ss
+        where cid=#{cid}
+        ) sss
+        where s.uid=#{uid} and s.ssid=sss.ssid
+        order by s.ssid desc
+    </select>
+    <select id="getSignInBySid" resultType="cn.fzn.classsign.common.entity.SignIn">
+        select * from signin
+        where sid=#{sid}
+    </select>
+</mapper>
