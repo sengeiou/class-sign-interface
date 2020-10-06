@@ -15,7 +15,7 @@ public class SmsUtil {
     private static final String SignName = "课堂签";
 
     public static Boolean SendSms(String tele, String code, String TemplateCode) {
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI4G6L8e3qGsTJrJ1zjed5", "13sozHXtFxDuobsaplM7EospvQ8sdU");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "xxxxxxxxxxxxxxxxxxx", "xxxxxxxxxxxx");
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
         request.setSysMethod(MethodType.POST);
